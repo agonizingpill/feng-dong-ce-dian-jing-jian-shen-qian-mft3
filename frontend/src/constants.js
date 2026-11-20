@@ -6,3 +6,5 @@ export const CERTIFICATE_STATES={draft:'待签发',issued:'已签发'};
 export const RUN_STATES={planned:'计划待核对',running:'试验运行中',completed:'已完结'};
 
 export const MOUNT_STATES={draft:'待验收',accepted:'已验收'},BATCH_STATES={collecting:'采集中',frozen:'已冻结'},DELIVERY_STATES={submitted:'待复核',approved:'已核准',acknowledged:'已回执'};
+
+export const GRID_STATES={draft:'待签发',issued:'已签发'};

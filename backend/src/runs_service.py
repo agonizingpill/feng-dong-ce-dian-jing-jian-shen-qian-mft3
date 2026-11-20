@@ -36,8 +36,15 @@ def start(s,id,u):
         certificates.append(certificate_view(s,current_certificate(s,p)))
     from .mount_service import readiness
     mounting=readiness(s,x)
+    from .grid_service import current as current_grid,locate
+    grid=current_grid(s,l.id);grid_check=None
+    if grid:
+        si=locate(x.speed,grid.speed_intervals);ai=locate(x.target_angle,grid.angle_intervals)
+        if si is None or ai is None:raise HTTPException(409,'目标工况不在本布置已签发的工况表内，表外不放行')
+        cell=next(c for c in grid.cells if c['speed_index']==si and c['angle_index']==ai)
+        grid_check={'grid_id':grid.id,'code':grid.code,'mae_limit_n':grid.mae_limit,'speed_intervals':grid.speed_intervals,'angle_intervals':grid.angle_intervals,'cells':grid.cells,'matched_cell':cell,'issued_by':grid.issued_by,'issued_at':grid.issued_at}
     now=datetime.now(timezone.utc).isoformat()
-    x.snapshot=deepcopy({'layout':pack_layout(s,l),'probes':[pack(p) for p in probes],'certificates':certificates,'speed':x.speed,'target_angle':x.target_angle,'checklist':x.checklist,'checked_at':now,'mounting':mounting})
+    x.snapshot=deepcopy({'layout':pack_layout(s,l),'probes':[pack(p) for p in probes],'certificates':certificates,'speed':x.speed,'target_angle':x.target_angle,'checklist':x.checklist,'checked_at':now,'mounting':mounting,'condition_grid':grid_check})
     x.state='running';x.started_at=now;x.started_by=u.email;audit(s,u,'负责人开车 '+x.code);return pack(x)
 def finish(s,id,d,u):
     x=locked(s,TunnelRun,id)

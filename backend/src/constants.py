@@ -8,3 +8,5 @@ RUN_STATES=('planned','running','completed')
 MOUNT_STATES=('draft','accepted')
 BATCH_STATES=('collecting','frozen')
 DELIVERY_STATES=('submitted','approved','acknowledged')
+
+GRID_STATES=('draft','issued')

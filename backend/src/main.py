@@ -13,6 +13,7 @@ from .services import get,pack,pack_layout,pack_sweep,audit,invalidate,assign,ch
 from .middlewares import RequestTrace,BurstGuard
 from .readiness_routes import router as readiness_router
 from .testcycle_routes import router as testcycle_router
+from .grid_routes import router as grid_router
 from .constants import ROLES,ZONES,LAYOUT_STATES
 r=redis.Redis.from_url(os.environ['REDIS_URL'],decode_responses=True)
 @asynccontextmanager
@@ -24,7 +25,7 @@ async def lifespan(app):
             seed()
         except Exception:logging.exception('seed failed')
     yield
-app=FastAPI(title='翼衡 · 风洞测点精简审签',lifespan=lifespan);app.include_router(readiness_router);app.include_router(testcycle_router);app.add_middleware(RequestTrace);app.add_middleware(BurstGuard)
+app=FastAPI(title='翼衡 · 风洞测点精简审签',lifespan=lifespan);app.include_router(readiness_router);app.include_router(testcycle_router);app.include_router(grid_router);app.add_middleware(RequestTrace);app.add_middleware(BurstGuard)
 @app.exception_handler(IntegrityError)
 async def conflict(req,exc):return JSONResponse({'detail':'编号重复、测点重复或关联条件不满足，请核对'},409)
 @app.get('/health')
